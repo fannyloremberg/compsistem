@@ -126,10 +126,19 @@ img.logo-glow{
   z-index:8;
   filter:drop-shadow(0 4px 8px rgba(0,0,0,.45)) drop-shadow(0 0 10px rgba(255,45,138,.35));
 }
+/* Canto fixo quando a logo sai da vista — JS define left/top/tamanho */
+.cs-chibi.cs-dock{
+  position:fixed;
+  position-anchor:none;
+  z-index:25;
+  filter:drop-shadow(0 6px 14px rgba(0,0,0,.5)) drop-shadow(0 0 12px rgba(255,45,138,.45));
+}
+
 .cs-chibi-inner{
   position:relative;
   width:100%;
   height:100%;
+  overflow:visible;
 }
 .cs-chibi-inner.cs-flutua{animation:cs-flutuar 4.6s ease-in-out infinite;}
 .cs-chibi-inner.cs-pula{animation:cs-pulo .55s cubic-bezier(.2,1.4,.3,1);}
@@ -184,30 +193,36 @@ img.logo-glow{
   touch-action:manipulation;
 }
 
+/* Balões grandes e legíveis; o JS pode virar o lado se faltar espaço. */
 .cs-balao{
   position:absolute;
   left:auto;
   right:102%;
-  bottom:40%;
+  bottom:34%;
   z-index:4;
   pointer-events:auto;
-  max-width:9.6rem;
-  padding:.45rem .7rem;
-  border-radius:1rem 1rem .25rem 1rem;
+  max-width:15rem;
+  min-width:7.6rem;
+  padding:.85rem 1.1rem;
+  border-radius:1.15rem 1.15rem .3rem 1.15rem;
   background:#ff2d8a;
   color:#07070a;
   font-family:"Outfit",system-ui,sans-serif;
-  font-size:.82rem;
-  font-weight:600;
-  line-height:1.25;
-  box-shadow:0 6px 16px rgba(0,0,0,.35);
+  font-size:1.25rem; /* 20px */
+  font-weight:800;
+  letter-spacing:.01em;
+  line-height:1.3;
+  box-shadow:0 8px 20px rgba(0,0,0,.4);
   cursor:pointer;
   border:0;
   text-align:left;
+  overflow:visible;
+  word-break:normal;
+  overflow-wrap:break-word;
   opacity:0;
   transform:translateY(6px) scale(.96);
   visibility:hidden;
-  transition:opacity .25s ease, transform .25s ease, visibility .25s;
+  transition:opacity .25s ease, visibility .25s;
 }
 .cs-balao.cs-show{
   opacity:1;
@@ -215,11 +230,26 @@ img.logo-glow{
   visibility:visible;
 }
 .cs-balao.cs-balao-welcome{
-  max-width:8.5rem;
+  max-width:15rem;
   background:#f6f6f8;
   color:#07070a;
   border:2px solid #ff2d8a;
 }
+.cs-balao.cs-flip{
+  right:auto;
+  left:102%;
+  border-radius:1.15rem 1.15rem 1.15rem .3rem;
+}
+.cs-balao.cs-acima{
+  right:auto;
+  left:50%;
+  bottom:100%;
+  margin-bottom:.35rem;
+  border-radius:1.15rem;
+  transform:translate(-50%, 0);
+}
+.cs-balao.cs-acima.cs-show{transform:translate(-50%, 0);}
+
 
 .cs-confetes{
   position:absolute;
@@ -264,11 +294,199 @@ img.logo-glow{
     right:auto;
     left:auto;
     right:102%;
-    bottom:36%;
-    max-width:8.4rem;
-    font-size:.74rem;
-    border-radius:1rem 1rem .25rem 1rem;
+    bottom:22%;
+    max-width:13rem;
+    min-width:7.2rem;
+    font-size:1.125rem; /* 18px */
+    font-weight:800;
+    padding:.75rem 1rem;
+    border-radius:1.1rem 1.1rem .3rem 1.1rem;
   }
+}
+
+
+/* Acessórios sazonais / touca de dormir — mesmo canvas do corpo */
+.cs-hat{
+  position:absolute;
+  left:0;top:0;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:bottom center;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  user-select:none;
+  -webkit-user-drag:none;
+  z-index:6;
+  transition:opacity .25s ease, visibility .25s;
+}
+.cs-hat.cs-on{
+  opacity:1;
+  visibility:visible;
+}
+
+/* Coraçõezinhos do modo tímido */
+.cs-hearts{
+  position:absolute;
+  inset:-28% -18% 18%;
+  pointer-events:none;
+  overflow:visible;
+  z-index:7;
+}
+.cs-floheart{
+  position:absolute;
+  left:50%;
+  bottom:42%;
+  width:12px;
+  height:12px;
+  margin-left:-6px;
+  background:#ff2d8a;
+  transform:rotate(45deg);
+  transform-origin:center;
+  animation:cs-floheart 1.15s ease-out forwards;
+  pointer-events:none;
+}
+.cs-floheart::before,
+.cs-floheart::after{
+  content:"";
+  position:absolute;
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:#ff2d8a;
+}
+.cs-floheart::before{left:-6px;top:0;}
+.cs-floheart::after{left:0;top:-6px;}
+
+@keyframes cs-floheart{
+  0%{opacity:1;transform:rotate(45deg) translate(0,0) scale(.55);}
+  100%{opacity:0;transform:rotate(45deg) translate(var(--dx), var(--dy)) scale(1.15);}
+}
+
+
+/* Corpos especiais (pijama / natal): a tela fica em outro lugar */
+.cs-chibi.cs-pijama .cs-tela{
+  left:14.2%;
+  top:23.3%;
+  width:54.4%;
+  height:31.3%;
+}
+.cs-chibi.cs-outfit-natal .cs-tela{
+  left:14.4%;
+  top:37.7%;
+  width:51.1%;
+  height:28.8%;
+}
+.cs-chibi.cs-caminha .cs-tela{
+  left:38.06%;
+  top:26.88%;
+  width:35.56%;
+  height:22.29%;
+}
+.cs-chibi.cs-outfit-anonovo .cs-tela{
+  left:26.94%;
+  top:29.58%;
+  width:45.83%;
+  height:27.29%;
+}
+.cs-chibi.cs-outfit-criancas .cs-tela{
+  left:13.33%;
+  top:30.42%;
+  width:50.56%;
+  height:29.58%;
+}
+.cs-chibi.cs-outfit-pascoa .cs-tela{
+  left:28.06%;
+  top:34.38%;
+  width:42.78%;
+  height:26.04%;
+}
+/* zzz ao lado da cabecinha deitado na caminha, acima do colchão */
+.cs-chibi.cs-caminha .cs-zeds{
+  left:6%;
+  top:4%;
+  width:48%;
+  height:36%;
+}
+
+
+/* zzz grandes, brancos com contorno, ao lado da cabecinha (nunca sobem no header / Pedir) */
+.cs-zeds{
+  position:absolute;
+  left:-22%;
+  top:22%;
+  width:58%;
+  height:42%;
+  pointer-events:none;
+  overflow:visible;
+  z-index:8;
+  opacity:0;
+  visibility:hidden;
+  --zed-up:-16px;
+  --zed-side:-14px;
+}
+.cs-zeds.cs-on{
+  opacity:1;
+  visibility:visible;
+}
+.cs-zed{
+  position:absolute;
+  font-family:"Outfit",system-ui,sans-serif;
+  font-weight:900;
+  color:#ffffff;
+  -webkit-text-stroke:0;
+  line-height:1;
+  /* contorno escuro via shadow (stroke do webkit cobria o branco) + glow rosa */
+  text-shadow:
+    -3px -3px 0 #07070a,
+     3px -3px 0 #07070a,
+    -3px  3px 0 #07070a,
+     3px  3px 0 #07070a,
+    -3px  0 0 #07070a,
+     3px  0 0 #07070a,
+     0 -3px 0 #07070a,
+     0  3px 0 #07070a,
+     0 0 8px #ffffff,
+     0 0 16px #ff2d8a,
+     0 0 28px #ff2d8a;
+  animation:cs-zed-up 2.2s ease-out infinite;
+  pointer-events:none;
+}
+.cs-zed:nth-child(1){ font-size:2.2rem;  left:4%;  bottom:8%;  animation-delay:0s; }
+.cs-zed:nth-child(2){ font-size:2.9rem;  left:28%; bottom:22%; animation-delay:.35s; }
+.cs-zed:nth-child(3){ font-size:3.55rem; left:52%; bottom:36%; animation-delay:.7s; }
+.cs-zed-emoji{
+  font-size:2.5rem !important;
+  left:10%;
+  bottom:28%;
+  animation-delay:1s;
+  -webkit-text-stroke:0;
+  text-shadow:none;
+  filter:drop-shadow(0 0 5px #fff) drop-shadow(0 0 12px #ff2d8a) drop-shadow(1px 1px 0 #07070a);
+}
+
+@keyframes cs-zed-up{
+  0%{opacity:0; transform:translate(0, 6px) scale(.8);}
+  12%{opacity:1;}
+  80%{opacity:1;}
+  100%{opacity:.45; transform:translate(-6px, var(--zed-up, -16px)) scale(1.08);}
+}
+@keyframes cs-zed-side{
+  0%{opacity:0; transform:translate(8px, 2px) scale(.8);}
+  12%{opacity:1;}
+  80%{opacity:1;}
+  100%{opacity:.45; transform:translate(var(--zed-side, -40px), -2px) scale(1.08);}
+}
+.cs-zeds.cs-zeds-side .cs-zed{ animation-name:cs-zed-side; }
+
+@media (max-width:767px){
+  .cs-zeds{ left:-30%; top:24%; width:62%; height:44%; }
+  .cs-zeds .cs-zed{ animation-name:cs-zed-side; }
+  .cs-zed:nth-child(1){ font-size:1.85rem; }
+  .cs-zed:nth-child(2){ font-size:2.45rem; }
+  .cs-zed:nth-child(3){ font-size:3.05rem; }
+  .cs-zed-emoji{ font-size:2.15rem !important; }
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -281,10 +499,15 @@ img.logo-glow{
   .cs-chibi-inner.cs-pula,
   .cs-chibi-inner.cs-aperto,
   .cs-confete,
-  .cs-balao{
+  .cs-balao,
+  .cs-hat,
+  .cs-floheart,
+  .cs-zed{
     animation:none !important;
     transition:none !important;
   }
+  .cs-zed{opacity:.95;transform:none;}
+  .cs-floheart{opacity:.9;}
   .cs-led-barra{opacity:.2;}
   .cs-led-barra::after{display:none;}
   .cs-leds.cs-liga .cs-led-barra{opacity:.45;}
