@@ -110,7 +110,10 @@
       probe.id = "cs-safe-probe";
       probe.setAttribute("aria-hidden", "true");
       probe.style.cssText = "position:fixed;pointer-events:none;visibility:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);";
-      document.body.appendChild(probe);
+      /* fora da árvore do React: o #root / <!--$--> fecha antes de .cs-chibi */
+      var host = document.querySelector(".cs-chibi") || document.querySelector(".cs-leds");
+      if (host) host.appendChild(probe);
+      else return 0;
     }
     var cs = window.getComputedStyle(probe);
     if (side === "top") return parseFloat(cs.paddingTop) || 0;
@@ -1381,18 +1384,11 @@
   }
 
   function watchBottom() {
-    if (!("IntersectionObserver" in window)) return;
-    var sent = document.createElement("div");
-    sent.id = "cs-fim-pagina";
-    sent.setAttribute("aria-hidden", "true");
-    sent.style.cssText = "height:1px;width:1px;pointer-events:none;position:relative;";
-    var anchor = document.getElementById("cartao");
-    if (anchor && anchor.parentNode) anchor.parentNode.insertBefore(sent, anchor.nextSibling);
-    else if (document.body) document.body.appendChild(sent);
-    var io = new IntersectionObserver(function (entries) {
-      if (!entries.some(function (e) { return e.isIntersecting; })) return;
+    /* não insere nó na árvore do React (causava hydration mismatch #418).
+       o critério já era “perto do fim da página”; basta ouvir o scroll. */
+    function checkBottom() {
       var near = (window.scrollY + window.innerHeight) >= (Math.max(document.documentElement.scrollHeight, document.body.scrollHeight) - 200);
-      if (!near && window.scrollY < 200) return;
+      if (!near) return;
       if (bottomOnce) return;
       bottomOnce = true;
       if (!firstTourDone && (demoQueue.length || busy())) {
@@ -1400,8 +1396,9 @@
         return;
       }
       requestAction(doBye);
-    }, { threshold: 0.01, rootMargin: "0px 0px 40px 0px" });
-    io.observe(sent);
+    }
+    document.addEventListener("scroll", checkBottom, { passive: true });
+    later(checkBottom, 0);
   }
 
   function isCopyControl(el) {
